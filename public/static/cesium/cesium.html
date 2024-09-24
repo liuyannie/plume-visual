@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Use correct character set. -->
+  <meta charset="utf-8" />
+  <!-- Tell IE to use the latest, best version. -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+  <title>Hello World!</title>
+  <script src="Build/CesiumUnminified/Cesium.js"></script>
+  <style>
+    @import url(Build/CesiumUnminified/Widgets/widgets.css);
+
+    html,
+    body,
+    #cesiumContainer {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="cesiumContainer"></div>
+  <script>
+    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJkMTUxOGQ0YS0xNWUzLTQ3Y2MtYjA5MS0wZTlhMzFiYWQwMTYiLCJpZCI6MTE0NDM5LCJpYXQiOjE2NjgwODAzNzd9.yRdRPpKDpcubvgfOfXYO1sO5tn7Sl9Et5KsYPyZu0uA';
+
+    const viewer = new Cesium.Viewer('cesiumContainer', {
+      terrainProvider: Cesium.createWorldTerrain({
+        requestWaterMask: true,
+        requestVertexNormals: true,
+      }),
+      // timeline: false, // 设置为false来移除时间轴
+      // animation: false, // 设置为false来移除动画控制器
+      baseLayerPicker: false,  // 右上角的图层选择按钮
+      geocoder: false,  // 搜索框
+      homeButton: false,  // home按钮
+      sceneModePicker: false, // 模式切换按钮
+      navigationHelpButton: false,  // 右上角的帮助按钮，
+      fullscreenButton: false,   // 右下角的全屏按钮
+    });
+
+    viewer.scene.mode = Cesium.SceneMode.SCENE2D;
+
+    viewer._cesiumWidget._creditContainer.style.display = "none"; //取消版权信息
+
+    // 设置相机位置
+    viewer.camera.setView({
+      destination: Cesium.Rectangle.fromDegrees(103.66, 23.16, 145.05, 38.55) // 这个范围包含中国
+    });
+
+    // const viewer = new Cesium.Viewer('cesiumContainer', {
+    //   terrainProvider: new Cesium.CesiumTerrainProvider({
+    //     url: 'http://10.142.15.233:8083/'
+    //   })
+    // });
+
+    viewer.scene.globe.enableLighting = true;
+
+    // viewer.scene.fog.enabled = true;
+    // viewer.scene.fog.density = 0.0005; // 雾化密度，可以调整此值以控制雾的浓度
+    // viewer.scene.fog.minimumBrightness = 0.5; // 最小亮度值，即雾化的最小亮度
+    // viewer.scene.fog.maximumBrightness = 1.0; // 最大亮度值，即雾化的最大亮度
+    // viewer.scene.skyAtmosphere.show = false;
+
+    viewer.scene.screenSpaceCameraController.enableCollisionDetection = false; // 碰撞检测
+    viewer.scene.globe.translucency.enabled = true;
+    viewer.scene.globe.translucency.frontFaceAlpha = 0.8;
+    viewer.scene.globe.depthTestAgainstTerrain = true; // 深度检测
+
+    // viewer.scene.skyAtmosphere.hueShift = 0.6341;
+    // viewer.scene.skyAtmosphere.saturationShift = 1.0000;
+    // viewer.scene.skyAtmosphere.brightnessShift = 0.5216;
+    // viewer.scene.globe.atmosphereHueShift = 0.6341;
+    // viewer.scene.globe.atmosphereSaturationShift = 1.0000;
+    // viewer.scene.globe.atmosphereBrightnessShift = 0.5216;
+
+    // // 时间轴设置
+    // start = Cesium.JulianDate.fromDate(new Date());  // 设置时间轴当前时间为开始时间
+    // start = Cesium.JulianDate.addHours(start, 8, new Cesium.JulianDate());   // 开始时间加8小时改为北京时间
+    // stop = Cesium.JulianDate.addSeconds(start, 120, new Cesium.JulianDate());   // 设置结束时间为开始时间加120秒
+    // // 设置时钟开始时间
+    // viewer.clock.startTime = start.clone();
+    // // 设置时钟当前时间
+    // viewer.clock.currentTime = start.clone();
+    // // 设置时钟结束时间
+    // viewer.clock.stopTime = stop.clone();
+    // // 时间速率，数字越大时间过的越快，设置1好像是和实际时间一样
+    // viewer.clock.multiplier = 1;
+    // // 时间轴绑定到viewer上去
+    // viewer.timeline.zoomTo(start, stop);
+    // // 循环执行，到达终止时间，重新从起点时间开始
+    // viewer.clock.clockRange = Cesium.ClockRange.LOOP_STOP;
+
+    var clock = viewer.clock;
+    clock.shouldAnimate = true;
+
+    // function computeFlight(source) {
+    //   let property = new Cesium.SampledPositionProperty();
+    //   for (let i = 0; i < source.length; i++) {
+    //     let time = Cesium.JulianDate.addSeconds(start, source[i].time, new Cesium.JulianDate);
+    //     let position = Cesium.Cartesian3.fromDegrees(source[i].longitude, source[i].latitude, source[i].height);
+    //     // 添加位置，和时间对应
+    //     property.addSample(time, position);
+    //   }
+    //   return property;
+    // }
+
+    // data = [{ longitude: 120.04752451, latitude: 35.77190447, height: 0, time: 0 },
+    // { longitude: 120.04538845, latitude: 35.77012977, height: 0, time: 60 },
+    // { longitude: 120.04923333, latitude: 35.77004658, height: 0, time: 120 }];
+
+    // let property = computeFlight(data);   // 这是通过一个方法把时间轴和船的位置信息绑定了
+    // let entity = viewer.entities.add({
+    //   id: '轮船',
+    //   availability: new Cesium.TimeIntervalCollection([new Cesium.TimeInterval({
+    //     start: start,
+    //     stop: stop
+    //   })]),
+
+    //   position: property,
+    //   orientation: new Cesium.VelocityOrientationProperty(property),  // 根据速度计算方向角
+    //   model: {
+    //     uri: './test.gltf', // gltf文件的URL
+    //     scale: 0.5,     // 放大倍数
+    //     // color: Cesium.Color.fromCssColorString('rgba(0, 253, 239, 0.6)'),  // 船模型颜色
+    //     // silhouetteColor: Cesium.Color.fromCssColorString('rgba(0, 255, 0, 1)'),   // 船模型边框颜色
+    //     // silhouetteSize: 1      // 船模型边框宽度
+    //   },
+    //   path: {    // 船路径
+    //     resolution: 1,  // 这个不知道是啥
+    //     material: new Cesium.PolylineGlowMaterialProperty({
+    //       glowPower: 1,    // 颜色透明度
+    //       color: Cesium.Color.fromCssColorString('rgba(0, 253, 239, 0.5)')   // 路线颜色
+    //     }),
+    //     width: 2  // 路线的显示宽度
+    //   },
+    //   description: `<div>
+    //     <p>我是轮船</p>
+    //     </div>`
+    // });
+    // viewer.trackedEntity = entity;   // 视角跟随模型
+
+    var shipPosition = Cesium.Cartesian3.fromDegrees(120.22620794, 35.71557752, 3);
+    let ship = viewer.entities.add({
+      id: "海试实验船",
+      position: shipPosition,
+      orientation: Cesium.Transforms.headingPitchRollQuaternion(
+        shipPosition,
+        new Cesium.HeadingPitchRoll(
+          Cesium.Math.toRadians(135), // 设置这个属性即可（顺时针旋转的角度值）
+          Cesium.Math.toRadians(0),
+          Cesium.Math.toRadians(0)
+        )
+      ),
+      model: {
+        uri: "./ship.gltf", // 模型文件相对路径
+        scale: 0.5, // 调整模型在地图中的大小
+      },
+      description: `<div>
+          <p>位置：120.22620794°E，35.71557752°N</p>
+          <p>状态：正常</p>
+          </div>`
+    });
+
+    var towerCranePosition = Cesium.Cartesian3.fromDegrees(120.22520794, 35.71657752, 0);
+    let towerCrane = viewer.entities.add({
+      id: "塔吊",
+      position: towerCranePosition,
+      model: {
+        uri: "./tower_crane.gltf", // 模型文件相对路径
+        scale: 2, // 调整模型在地图中的大小
+      },
+      description: `<div>
+          <p>位置：120.22520794°E，35.71657752°N</p>
+          <p>状态：正常</p>
+          </div>`
+    });
+
+    var buoy1Positon = Cesium.Cartesian3.fromDegrees(120.22520794, 35.71557752, 4.5);
+    let buoy1 = viewer.entities.add({
+      id: "1号海面监测浮标",
+      position: buoy1Positon,
+      model: {
+        uri: "./buoy.glb", // 模型文件相对路径
+        scale: 0.01, // 调整模型在地图中的大小
+      },
+      description: `<div>
+          <p>位置：120.22520794°E，35.71557752°N</p>
+          <p>状态：正常</p>
+          </div>`
+    });
+
+    var buoy2Positon = Cesium.Cartesian3.fromDegrees(120.22420794, 35.71457752, 4.5);
+    let buoy2 = viewer.entities.add({
+      id: "2号海面监测浮标",
+      position: buoy2Positon,
+      model: {
+        uri: "./buoy.glb", // 模型文件相对路径
+        scale: 0.01, // 调整模型在地图中的大小
+      },
+      description: `<div>
+          <p>位置：120.22420794°E，35.71457752°N</p>
+          <p>状态：正常</p>
+          </div>`
+    });
+
+    var buoy3Positon = Cesium.Cartesian3.fromDegrees(120.22620794, 35.71457752, 4.5);
+    let buoy3 = viewer.entities.add({
+      id: "3号海面监测浮标",
+      position: buoy3Positon,
+      model: {
+        uri: "./buoy.glb", // 模型文件相对路径
+        scale: 0.01, // 调整模型在地图中的大小
+      },
+      description: `<div>
+          <p>位置：120.22620794°E，35.71457752°N</p>
+          <p>状态：正常</p>
+          </div>`
+    });
+
+    var buoy4Positon = Cesium.Cartesian3.fromDegrees(120.22420794, 35.71657752, 4.5);
+    let buoy4 = viewer.entities.add({
+      id: "4号海面监测浮标",
+      position: buoy4Positon,
+      model: {
+        uri: "./buoy.glb", // 模型文件相对路径
+        scale: 0.01, // 调整模型在地图中的大小
+      },
+      description: `<div>
+          <p>位置：120.22420794°E，35.71657752°N</p>
+          <p>状态：正常</p>
+          </div>`
+    });
+
+    var buoy5Positon = Cesium.Cartesian3.fromDegrees(120.22620794, 35.71657752, 4.5);
+    let buoy5 = viewer.entities.add({
+      id: "5号海面监测浮标",
+      position: buoy5Positon,
+      model: {
+        uri: "./buoy.glb", // 模型文件相对路径
+        scale: 0.01, // 调整模型在地图中的大小
+      },
+      description: `<div>
+          <p>位置：120.22620794°E，35.71657752°N</p>
+          <p>状态：正常</p>
+          </div>`
+    });
+
+    // let entity7 = viewer.entities.add({
+    //   id: '海底地形',
+    //   position: Cesium.Cartesian3.fromDegrees(120.04538845, 35.77012977, -300.0),
+    //   model: {
+    //     uri: './海底地形.glb', // 模型文件相对路径
+    //     scale: 0.5, // 调整模型在地图中的大小
+    //   },
+    //   // description: `<div>
+    //   //     <p>设备状态：正常</p>
+    //   //     </div>`
+    // });
+
+    function animateModel(entity, amplitude, frequency) {
+      var startTime = Cesium.JulianDate.now().clone();
+
+      viewer.scene.preUpdate.addEventListener(function (scene, time) {
+        var elapsedTime = Cesium.JulianDate.secondsDifference(time, startTime);
+        var offset = Math.sin(elapsedTime * frequency) * amplitude;
+
+        var newPosition = entity.position.getValue(time).clone();
+        newPosition.z += offset;
+
+        entity.position.setValue(newPosition);
+      });
+    }
+
+    // 调用函数，设置振幅和频率
+    animateModel(ship, 0.02, 1.5);
+    animateModel(buoy1, 0.01, 1.5);
+    animateModel(buoy2, 0.01, 1.5);
+    animateModel(buoy3, 0.01, 1.5);
+    animateModel(buoy4, 0.01, 1.5);
+    animateModel(buoy5, 0.01, 1.5);
+
+    // viewer.scene.light = new Cesium.DirectionalLight({ // 去除时间原因影响模型颜色
+    //   direction: new Cesium.Cartesian3(0.35492591601301104, -0.8909182691839401, -0.2833588392420772)
+    // });
+
+    // 这是请求阿里DataV上的数据
+    const jsonData = './area.geojson';
+    // jsonData一定要json文件
+    const geoJSON = Cesium.GeoJsonDataSource.load(jsonData, {
+      stroke: Cesium.Color.fromCssColorString("#00fcff"),
+      fill: Cesium.Color.fromCssColorString("#ffffff").withAlpha(0.0),
+      strokeWidth: 5,
+      markerSymbol: "?",
+    });
+    viewer.dataSources.add(geoJSON);
+
+    // 第一个目标地点的位置
+    var target1Heading = 5.338625143063018; // 第一个目标地点的航向角，单位为弧度
+    var target1Pitch = -0.14132597644906242; // 第一个目标地点的俯仰角，单位为弧度
+    var target1Roll = 6.282867546949593; // 第一个目标地点的横滚角，单位为弧度
+    var target1Position = new Cesium.Cartesian3(-2602786.9739867435, 4487615.836432951, 3703460.7777646314); // 第一个目标地点的位置坐标
+
+    // 第二个目标地点的位置
+    var target2Heading = 5.342397014659041; // 第二个目标地点的航向角，单位为弧度
+    var target2Pitch = -0.1413278700943288; // 第二个目标地点的俯仰角，单位为弧度
+    var target2Roll = 0.00005981306413804788; // 第二个目标地点的横滚角，单位为弧度
+    var target2Position = new Cesium.Cartesian3(-2610879.1651273863, 4479742.200581493, 3702185.7270878074); // 第二个目标地点的位置坐标
+
+    // viewer.camera.flyTo({
+    //   destination: new Cesium.Cartesian3(-2617292.573906152, 4527040.800877684, 3736089.4361631437),
+    //   duration: 8, // 飞行到目标地点的时间，单位为秒
+    //   // complete: function () {
+    //   //   viewer.camera.flyTo({
+    //   //     destination: target1Position,
+    //   //     orientation: {
+    //   //       heading: target1Heading,
+    //   //       pitch: target1Pitch,
+    //   //       roll: target1Roll,
+    //   //     },
+    //   //     duration: 5, // 飞行到目标地点的时间，单位为秒
+    //   complete: function () {
+    //     viewer.camera.flyTo({
+    //       destination: target2Position,
+    //       orientation: {
+    //         heading: target2Heading,
+    //         pitch: target2Pitch,
+    //         roll: target2Roll,
+    //       },
+    //       duration: 5, // 飞行到目标地点的时间，单位为秒
+    //     });
+    //   }
+    // });
+    //   }
+    // });
+  </script>
+</body>
+
+</html>
